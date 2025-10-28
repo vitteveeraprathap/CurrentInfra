@@ -1,20 +1,19 @@
-param name string
+param baseName string
 param location string
-param workspaceId string
-param workspaceKey string
+param logAnalyticsId string
 
-resource env 'Microsoft.App/managedEnvironments@2023-05-01' = {
-  name: name
+resource cae 'Microsoft.App/managedEnvironments@2023-05-01' = {
+  name: 'container-app-env-${baseName}'
   location: location
   properties: {
     appLogsConfiguration: {
       destination: 'log-analytics'
       logAnalyticsConfiguration: {
-        customerId: workspaceId
-        sharedKey: workspaceKey
+        customerId: reference(logAnalyticsId, '2021-06-01').customerId
+        sharedKey: listKeys(logAnalyticsId, '2021-06-01').primarySharedKey
       }
     }
   }
 }
 
-output environmentId string = env.id
+output id string = cae.id
