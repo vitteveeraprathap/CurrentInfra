@@ -1,53 +1,6 @@
-
-param environment string
 param baseName string
-param location string
+param location string = resourceGroup().location
 param containerImage string
-param logAnalyticsSku string = 'PerGB2018'
-
-var resourceGroupName = 'rg-${baseName}-${toLower(environment)}'
-
-resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: resourceGroupName
-  location: location
-}
-
-module logAnalytics './modules/logAnalytics.bicep' = {
-  name: '${baseName}-law'
-  scope: rg
-  params: {
-    baseName: baseName
-    location: location
-    sku: logAnalyticsSku
-  }
-}
-
-module acr './modules/containerRegistry.bicep' = {
-  name: '${baseName}-acr'
-  scope: rg
-  params: {
-    baseName: baseName
-    location: location
-  }
-}
-
-module kv './modules/keyVault.bicep' = {
-  name: '${baseName}-kv'
-  scope: rg
-  params: {
-    baseName: baseName
-    location: location
-  }
-}
-
-module eventGrid './modules/eventGrid.bicep' = {
-  name: '${baseName}-eventgrid'
-  scope: rg
-  params: {
-    baseName: baseName
-    location: location
-  }
-}
 
 module containerEnv './modules/containerEnv.bicep' = {
   name: 'containerEnv'
@@ -58,13 +11,49 @@ module containerEnv './modules/containerEnv.bicep' = {
   }
 }
 
-module app './modules/containerApp.bicep' = {
-  name: '${baseName}-app'
-  scope: rg
+module containerApp './modules/containerApp.bicep' = {
+  name: 'containerApp'
+  scope: resourceGroup()
   params: {
     baseName: baseName
     location: location
     containerImage: containerImage
-    containerEnvId: env.outputs.id
+    containerEnvId: containerEnv.outputs.environmentId
+  }
+}
+
+module eventGrid './modules/eventGrid.bicep' = {
+  name: 'eventGrid'
+  scope: resourceGroup()
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
+module keyVault './modules/keyVault.bicep' = {
+  name: 'keyVault'
+  scope: resourceGroup()
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
+module containerRegistry './modules/containerRegistry.bicep' = {
+  name: 'containerRegistry'
+  scope: resourceGroup()
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
+module logAnalytics './modules/logAnalytics.bicep' = {
+  name: 'logAnalytics'
+  scope: resourceGroup()
+  params: {
+    baseName: baseName
+    location: location
   }
 }
