@@ -1,3 +1,5 @@
+targetScope = 'resourceGroup'
+
 param baseName string
 param location string = resourceGroup().location
 param containerImage string
