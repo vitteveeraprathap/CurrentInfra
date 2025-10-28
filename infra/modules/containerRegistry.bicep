@@ -1,15 +1,16 @@
 param baseName string
 param location string
 
-resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: '${baseName}reg'
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
+  name: '${baseName}acr'
   location: location
   sku: {
-    name: 'Basic'
+    name: 'Basic'    // 🔥 REQUIRED field
   }
   properties: {
     adminUserEnabled: true
   }
 }
 
-output loginServer string = acr.properties.loginServer
+output loginServer string = containerRegistry.properties.loginServer
+output registryId string = containerRegistry.id
