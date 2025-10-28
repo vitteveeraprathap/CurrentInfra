@@ -1,33 +1,36 @@
-name: Deploy IIoT Bicep
+name: Deploy IIoT Infra
 
 on:
-  push:
-    branches:
-      - main
-
-env:
-  RESOURCE_GROUP: sandbox1
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy (DS, DT, PD)'
+        required: true
+        default: 'DS'
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 'Login to Azure'
+      - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Install Azure CLI Bicep tooling
+      - name: Create Resource Group (if not exists)
         run: |
-          az extension add --name bicep || true
-          az bicep install || true
+          az group create \
+            --name rg-iiot-${{ github.event.inputs.environment | toLower }} \
+            --location eastus
 
-      - name: Deploy Bicep to Resource Group
-        run: |
-          az deployment group create \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --template-file main.bicep \
-            --parameters @parameters.json
+      - name: Deploy Bicep
+        uses: azure/arm-deploy@v2
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          template: ./main.bicep
+          parameters: ./parameters.${{ github.event.inputs.environment | toLower }}.json
+          failOnStdErr: false
