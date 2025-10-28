@@ -1,10 +1,10 @@
 param baseName string
 param location string
 
-resource law 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+resource law 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   name: '${baseName}-law'
   location: location
-  sku: {                // ✅ Correct placement — outside properties
+  sku: {
     name: 'PerGB2018'
   }
   properties: {
