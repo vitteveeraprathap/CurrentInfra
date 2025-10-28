@@ -1,17 +1,16 @@
-param name string
+param baseName string
 param location string
+param sku string
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-  name: name
+resource law 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
+  name: '${baseName}-law'
   location: location
   properties: {
     sku: {
-      name: 'PerGB2018'
+      name: sku
     }
     retentionInDays: 30
   }
 }
 
-output workspaceId string = workspace.id
-output customerId string = workspace.properties.customerId
-output primaryKey string = listKeys(workspace.id, '2022-10-01').primarySharedKey
+output id string = law.id
