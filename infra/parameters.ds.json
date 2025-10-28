@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "baseName": { "value": "iiot-sandboxx" },
-    "location": { "value": "eastus" },
+    "location": { "value": "southeastasia" },
     "containerImage": { "value": "myacr.azurecr.io/iiot:ds-latest" }
   }
 }
