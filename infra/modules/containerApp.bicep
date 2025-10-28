@@ -1,27 +1,41 @@
 param baseName string
 param location string
-param containerEnvId string
 param containerImage string
+param containerEnv resource
 
-resource app 'Microsoft.App/containerApps@2023-05-01' = {
-  name: 'container-app-${baseName}'
+resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
+  name: '${baseName}-app'
   location: location
   properties: {
-    environmentId: containerEnvId
+    managedEnvironmentId: containerEnv.id
     configuration: {
-      activeRevisionsMode: 'Single'
+      ingress: {
+        external: true
+        targetPort: 80
+        transport: 'auto'
+      }
     }
     template: {
       containers: [
         {
-          name: 'main'
+          name: '${baseName}-container'
           image: containerImage
-          resources: {
-            cpu: 0.5
-            memory: '1Gi'
-          }
+          env: [
+            {
+              name: 'ENVIRONMENT'
+              value: baseName
+            }
+            {
+              name: 'SAMPLE_VAR'
+              value: 'demo'
+            }
+          ]
         }
       ]
+      scale: {
+        minReplicas: 1
+        maxReplicas: 2
+      }
     }
   }
 }
