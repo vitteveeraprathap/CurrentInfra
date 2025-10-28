@@ -1,35 +1,27 @@
-param name string
+param baseName string
 param location string
-param envId string
-param acrLoginServer string
+param containerEnvId string
 param containerImage string
-param containerCpu float
-param containerMemory string
 
 resource app 'Microsoft.App/containerApps@2023-05-01' = {
-  name: name
+  name: 'container-app-${baseName}'
   location: location
   properties: {
-    managedEnvironmentId: envId
+    environmentId: containerEnvId
     configuration: {
-      ingress: {
-        external: true
-        targetPort: 80
-      }
+      activeRevisionsMode: 'Single'
     }
     template: {
       containers: [
         {
-          name: 'iiot-app'
+          name: 'main'
           image: containerImage
           resources: {
-            cpu: containerCpu
-            memory: containerMemory
+            cpu: 0.5
+            memory: '1Gi'
           }
         }
       ]
     }
   }
 }
-
-output appId string = app.id
