@@ -23,14 +23,16 @@ jobs:
 
       - name: Create Resource Group (if not exists)
         run: |
+          env_lower=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
           az group create \
-            --name rg-iiot-${{ github.event.inputs.environment | toLower }} \
+            --name rg-iiot-$env_lower \
             --location eastus
 
       - name: Deploy Bicep
         uses: azure/arm-deploy@v2
         with:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: rg-iiot-${{ github.event.inputs.environment }}
           template: ./main.bicep
-          parameters: ./parameters.${{ github.event.inputs.environment | toLower }}.json
+          parameters: ./parameters.${{ github.event.inputs.environment }}.json
           failOnStdErr: false
