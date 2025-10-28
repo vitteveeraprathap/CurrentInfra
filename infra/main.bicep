@@ -49,13 +49,12 @@ module eventGrid './modules/eventGrid.bicep' = {
   }
 }
 
-module env './modules/containerEnv.bicep' = {
-  name: '${baseName}-env'
-  scope: rg
+module containerEnv './modules/containerEnv.bicep' = {
+  name: 'containerEnv'
+  scope: resourceGroup()
   params: {
     baseName: baseName
     location: location
-    logAnalyticsId: logAnalytics.outputs.id
   }
 }
 
