@@ -1,0 +1,24 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "westus"
+    },
+    "baseName": {
+      "value": "iiot-sandbox-wus"
+    },
+    "enableAdminUser": {
+      "value": true
+    },
+    "containerImage": {
+      "value": "iiotsandboxreg.azurecr.io/sample:latest"
+    },
+    "containerCpu": {
+      "value": 0.5
+    },
+    "containerMemory": {
+      "value": "1Gi"
+    }
+  }
+}
