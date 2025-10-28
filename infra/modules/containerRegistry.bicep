@@ -1,17 +1,15 @@
-param name string
+param baseName string
 param location string
-param enableAdminUser bool
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: name
+  name: '${baseName}reg'
   location: location
   sku: {
     name: 'Basic'
   }
   properties: {
-    adminUserEnabled: enableAdminUser
+    adminUserEnabled: true
   }
 }
 
 output loginServer string = acr.properties.loginServer
-output acrId string = acr.id
