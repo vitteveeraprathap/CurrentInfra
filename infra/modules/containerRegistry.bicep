@@ -5,7 +5,7 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2023-01-01-pr
   name: '${baseName}acr'
   location: location
   sku: {
-    name: 'Basic'    // 🔥 REQUIRED field
+    name: 'Basic'
   }
   properties: {
     adminUserEnabled: true
