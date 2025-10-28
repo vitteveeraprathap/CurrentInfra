@@ -1,13 +1,13 @@
 param baseName string
 param location string
 param containerImage string
-param containerEnv resource
+param containerEnvId string
 
 resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
   name: '${baseName}-app'
   location: location
   properties: {
-    managedEnvironmentId: containerEnv.id
+    managedEnvironmentId: containerEnvId
     configuration: {
       ingress: {
         external: true
@@ -24,10 +24,6 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
             {
               name: 'ENVIRONMENT'
               value: baseName
-            }
-            {
-              name: 'SAMPLE_VAR'
-              value: 'demo'
             }
           ]
         }
