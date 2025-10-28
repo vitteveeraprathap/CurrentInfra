@@ -22,17 +22,16 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Convert environment to lowercase
-        id: env
         run: |
           echo "env_lower=$(echo '${{ github.event.inputs.environment }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Create Resource Group (if not exists)
+      - name: Create Resource Group
         run: |
           az group create \
             --name rg-iiot-${{ env.env_lower }} \
             --location southeastasia
 
-      - name: Validate Bicep template
+      - name: Validate Bicep
         run: |
           az deployment group validate \
             --resource-group rg-iiot-${{ env.env_lower }} \
@@ -40,11 +39,9 @@ jobs:
             --parameters ./infra/parameters.${{ env.env_lower }}.json
 
       - name: Deploy Bicep
-        uses: azure/arm-deploy@v2
-        with:
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: rg-iiot-${{ env.env_lower }}
-          template: ./infra/main.bicep
-          parameters: ./infra/parameters.${{ env.env_lower }}.json
-          deploymentMode: Incremental
-          failOnStdErr: false
+        run: |
+          az deployment group create \
+            --name iiot-deploy-${{ env.env_lower }} \
+            --resource-group rg-iiot-${{ env.env_lower }} \
+            --template-file ./infra/main.bicep \
+            --parameters ./infra/parameters.${{ env.env_lower }}.json

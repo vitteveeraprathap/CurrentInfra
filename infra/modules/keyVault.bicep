@@ -2,7 +2,7 @@ param baseName string
 param location string
 
 resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
-  name: '${baseName}-kv'
+  name: '${baseName}-kvvv'
   location: location
   properties: {
     tenantId: subscription().tenantId

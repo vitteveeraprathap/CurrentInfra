@@ -4,28 +4,16 @@ param baseName string
 param location string = resourceGroup().location
 param containerImage string
 
-// Create Log Analytics Workspace
-module logAnalytics './modules/logAnalytics.bicep' = {
-  name: 'logAnalytics'
-  params: {
-    baseName: baseName
-    location: location
-  }
-}
-
-// Create Container Apps Environment (linked to Log Analytics)
+// Deploy container environment
 module containerEnv './modules/containerEnv.bicep' = {
   name: 'containerEnv'
   params: {
     baseName: baseName
     location: location
-    logAnalyticsId: logAnalytics.outputs.id
-    logAnalyticsCustomerId: logAnalytics.outputs.customerId
-    logAnalyticsSharedKey: logAnalytics.outputs.sharedKey
   }
 }
 
-// Create Container App
+// Deploy Container App
 module containerApp './modules/containerApp.bicep' = {
   name: 'containerApp'
   params: {
@@ -36,15 +24,25 @@ module containerApp './modules/containerApp.bicep' = {
   }
 }
 
-// Optional supporting resources
-module eventGrid './modules/eventGrid.bicep' = {
-  name: 'eventGrid'
+// Deploy Container Registry
+module containerRegistry './modules/containerRegistry.bicep' = {
+  name: 'containerRegistry'
   params: {
     baseName: baseName
     location: location
   }
 }
 
+// Deploy Log Analytics
+module logAnalytics './modules/logAnalytics.bicep' = {
+  name: 'logAnalytics'
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
+// Deploy Key Vault
 module keyVault './modules/keyVault.bicep' = {
   name: 'keyVault'
   params: {
@@ -53,8 +51,9 @@ module keyVault './modules/keyVault.bicep' = {
   }
 }
 
-module containerRegistry './modules/containerRegistry.bicep' = {
-  name: 'containerRegistry'
+// Deploy Event Grid
+module eventGrid './modules/eventGrid.bicep' = {
+  name: 'eventGrid'
   params: {
     baseName: baseName
     location: location
