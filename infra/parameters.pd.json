@@ -1,1 +1,11 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": { "value": "PD" },
+    "baseName": { "value": "iiot-live" },
+    "location": { "value": "westus" },
+    "containerImage": { "value": "myacr.azurecr.io/iiot:pd-latest" }
+  }
+}
 
