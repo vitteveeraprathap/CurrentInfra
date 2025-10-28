@@ -12,5 +12,7 @@ resource law 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   }
 }
 
-
+// Use listKeys() to fetch shared key after deployment
 output id string = law.id
+output customerId string = law.properties.customerId
+output sharedKey string = listKeys(resourceId('Microsoft.OperationalInsights/workspaces', law.name), '2020-08-01').primarySharedKey

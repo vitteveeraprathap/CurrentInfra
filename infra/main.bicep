@@ -4,18 +4,30 @@ param baseName string
 param location string = resourceGroup().location
 param containerImage string
 
-module containerEnv './modules/containerEnv.bicep' = {
-  name: 'containerEnv'
-  scope: resourceGroup()
+// Create Log Analytics Workspace
+module logAnalytics './modules/logAnalytics.bicep' = {
+  name: 'logAnalytics'
   params: {
     baseName: baseName
     location: location
   }
 }
 
+// Create Container Apps Environment (linked to Log Analytics)
+module containerEnv './modules/containerEnv.bicep' = {
+  name: 'containerEnv'
+  params: {
+    baseName: baseName
+    location: location
+    logAnalyticsId: logAnalytics.outputs.id
+    logAnalyticsCustomerId: logAnalytics.outputs.customerId
+    logAnalyticsSharedKey: logAnalytics.outputs.sharedKey
+  }
+}
+
+// Create Container App
 module containerApp './modules/containerApp.bicep' = {
   name: 'containerApp'
-  scope: resourceGroup()
   params: {
     baseName: baseName
     location: location
@@ -24,9 +36,9 @@ module containerApp './modules/containerApp.bicep' = {
   }
 }
 
+// Optional supporting resources
 module eventGrid './modules/eventGrid.bicep' = {
   name: 'eventGrid'
-  scope: resourceGroup()
   params: {
     baseName: baseName
     location: location
@@ -35,7 +47,6 @@ module eventGrid './modules/eventGrid.bicep' = {
 
 module keyVault './modules/keyVault.bicep' = {
   name: 'keyVault'
-  scope: resourceGroup()
   params: {
     baseName: baseName
     location: location
@@ -44,16 +55,6 @@ module keyVault './modules/keyVault.bicep' = {
 
 module containerRegistry './modules/containerRegistry.bicep' = {
   name: 'containerRegistry'
-  scope: resourceGroup()
-  params: {
-    baseName: baseName
-    location: location
-  }
-}
-
-module logAnalytics './modules/logAnalytics.bicep' = {
-  name: 'logAnalytics'
-  scope: resourceGroup()
   params: {
     baseName: baseName
     location: location

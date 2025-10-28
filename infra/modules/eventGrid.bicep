@@ -1,7 +1,9 @@
 param baseName string
 param location string
 
-resource eg 'Microsoft.EventGrid/topics@2022-06-15' = {
-  name: 'event-grid-${baseName}'
+resource eventGrid 'Microsoft.EventGrid/topics@2022-06-15' = {
+  name: '${baseName}-eg'
   location: location
 }
+
+output id string = eventGrid.id

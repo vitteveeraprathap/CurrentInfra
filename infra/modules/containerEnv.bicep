@@ -1,5 +1,8 @@
 param baseName string
 param location string
+param logAnalyticsId string
+param logAnalyticsCustomerId string
+param logAnalyticsSharedKey string
 
 resource containerEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
   name: '${baseName}-env'
@@ -7,6 +10,10 @@ resource containerEnv 'Microsoft.App/managedEnvironments@2023-05-01' = {
   properties: {
     appLogsConfiguration: {
       destination: 'log-analytics'
+      logAnalyticsConfiguration: {
+        customerId: logAnalyticsCustomerId
+        sharedKey: logAnalyticsSharedKey
+      }
     }
   }
 }
