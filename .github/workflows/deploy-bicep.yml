@@ -15,24 +15,35 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Convert environment to lowercase
+        id: env
+        run: |
+          echo "env_lower=$(echo '${{ github.event.inputs.environment }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - name: Create Resource Group (if not exists)
         run: |
-          env_lower=$(echo "${{ github.event.inputs.environment }}" | tr '[:upper:]' '[:lower:]')
           az group create \
-            --name rg-iiot-$env_lower \
+            --name rg-iiot-${{ env.env_lower }} \
             --location eastus
+
+      - name: Verify Bicep files
+        run: |
+          echo "Current directory: $(pwd)"
+          ls -R infra
 
       - name: Deploy Bicep
         uses: azure/arm-deploy@v2
         with:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           resourceGroupName: rg-iiot-${{ github.event.inputs.environment }}
-          template: ./main.bicep
-          parameters: ./parameters.${{ github.event.inputs.environment }}.json
+          template: ./infra/main.bicep
+          parameters: ./infra/parameters.${{ env.env_lower }}.json
           failOnStdErr: false
