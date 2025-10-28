@@ -13,37 +13,55 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # Step 2: Azure login using service principal
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      # Step 3: Convert environment input to lowercase
       - name: Convert environment to lowercase
         id: env
         run: |
           echo "env_lower=$(echo '${{ github.event.inputs.environment }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
+      # Step 4: Create or verify resource group
       - name: Create Resource Group (if not exists)
         run: |
           az group create \
             --name rg-iiot-${{ env.env_lower }} \
             --location southeastasia
 
+      # Step 5: Verify directory structure
       - name: Verify Bicep files
         run: |
           echo "Current directory: $(pwd)"
           ls -R infra
 
+      # Step 6: Validate Bicep template before deployment
+      - name: Validate Bicep template
+        run: |
+          az deployment group validate \
+            --resource-group rg-iiot-${{ env.env_lower }} \
+            --template-file ./infra/main.bicep \
+            --parameters ./infra/parameters.${{ env.env_lower }}.json
+
+      # Step 7: Deploy Bicep to Azure
       - name: Deploy Bicep
-        uses: azure/arm-deploy@v2
+        uses: azure/arm-deploy@v2.2.0
         with:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          resourceGroupName: rg-iiot-${{ github.event.inputs.environment }}
+          resourceGroupName: rg-iiot-${{ env.env_lower }}
           template: ./infra/main.bicep
           parameters: ./infra/parameters.${{ env.env_lower }}.json
+          deploymentMode: Incremental
           failOnStdErr: false
+        env:
+          AZURE_CORE_OUTPUT: json
+          AZURE_CORE_LOGGING_LEVEL: debug
