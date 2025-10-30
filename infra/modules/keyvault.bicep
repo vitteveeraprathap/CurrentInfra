@@ -16,6 +16,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
   tags: {
     Environment: environment
-    Owner: 'OTT ODC Amc'
+    Owner: 'OTT Americas'
   }
 }
