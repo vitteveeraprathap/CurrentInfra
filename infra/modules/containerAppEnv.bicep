@@ -15,6 +15,6 @@ resource containerAppEnv 'Microsoft.App/managedEnvironments@2025-02-02-preview' 
   }
   tags: {
     Environment: environment
-    Owner: 'OTT GDC Amc'
+    Owner: 'OTT Americas'
   }
 }
