@@ -11,6 +11,6 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2025-05-01-pr
   tags: {
     Environment: environment
     Application: 'Container registry'
-    'Application-Owner': 'Veera Vitte'
+    'Application-Owner': 'Veera'
   }
 }
