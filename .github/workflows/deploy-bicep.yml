@@ -25,6 +25,19 @@ jobs:
         run: |
           echo "env_lower=$(echo '${{ github.event.inputs.environment }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
+      # 🧱 Lint Bicep files
+      - name: Lint Bicep Templates
+        run: |
+          echo "Running bicep lint..."
+          # Install Bicep CLI
+          az bicep install
+          # Lint all bicep files under infra folder
+          find ./infra -name "*.bicep" -print0 | while IFS= read -r -d '' file; do
+            echo "Linting $file"
+            az bicep build --file "$file" --stdout >/dev/null
+            az bicep lint --file "$file"
+          done
+
       - name: Create Resource Group
         run: |
           az group create \
