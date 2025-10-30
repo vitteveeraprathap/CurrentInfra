@@ -1,13 +1,16 @@
-param baseName string
 param location string
+param environment string
+param registryName string
 
-resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01-preview' = {
-  name: '${baseName}acr'
+resource containerRegistry 'Microsoft.ContainerRegistry/registries@2025-05-01-preview' = {
+  name: registryName
   location: location
   sku: {
     name: 'Basic'
   }
-  properties: {}
+  tags: {
+    Environment: environment
+    Application: 'Container registry'
+    'Application-Owner': 'Veera Vitte'
+  }
 }
-
-output acrLoginServer string = acr.properties.loginServer
