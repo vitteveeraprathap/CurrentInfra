@@ -1,15 +1,17 @@
-param baseName string
 param location string
+param environment string
+param logAnalyticsWorkspaceName string
 
-resource law 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
-  name: '${baseName}-law'
+resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: logAnalyticsWorkspaceName
   location: location
-  sku: {
-    name: 'PerGB2018'
-  }
   properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
     retentionInDays: 30
   }
+  tags: {
+    Environment: environment
+  }
 }
-
-output logAnalyticsId string = law.id
