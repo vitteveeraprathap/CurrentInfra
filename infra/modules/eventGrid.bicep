@@ -1,9 +1,11 @@
-param baseName string
 param location string
+param environment string
+param eventGridNamespaceName string
 
-resource eventGrid 'Microsoft.EventGrid/topics@2022-06-15' = {
-  name: '${baseName}-eg'
+resource eventGridNamespace 'Microsoft.EventGrid/namespaces@2022-06-15' = {
+  name: eventGridNamespaceName
   location: location
+  tags: {
+    Environment: environment
+  }
 }
-
-output id string = eventGrid.id
