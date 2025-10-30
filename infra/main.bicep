@@ -1,61 +1,67 @@
-targetScope = 'resourceGroup'
+targetScope = 'subscription'
 
-param baseName string
-param location string = resourceGroup().location
-param containerImage string
+@description('Deployment location')
+param location string = 'westus2'
 
-// Deploy container environment
-module containerEnv './modules/containerEnv.bicep' = {
-  name: 'containerEnv'
+@description('Environment name (qa/uat/prod)')
+param environment string
+
+@description('Key Vault name')
+param keyVaultName string
+
+@description('Container Registry name')
+param registryName string
+
+@description('Container App Environment name')
+param containerAppEnvName string
+
+@description('Event Grid Namespace name')
+param eventGridNamespaceName string
+
+@description('Log Analytics Workspace name')
+param logAnalyticsWorkspaceName string
+
+module kv './modules/keyvault.bicep' = {
+  name: 'deploy-keyvault-${environment}'
   params: {
-    baseName: baseName
     location: location
+    environment: environment
+    keyVaultName: keyVaultName
   }
 }
 
-// Deploy Container App
-module containerApp './modules/containerApp.bicep' = {
-  name: 'containerApp'
+module acr './modules/containerRegistry.bicep' = {
+  name: 'deploy-registry-${environment}'
   params: {
-    baseName: baseName
     location: location
-    containerImage: containerImage
-    containerEnvId: containerEnv.outputs.environmentId
+    environment: environment
+    registryName: registryName
   }
 }
 
-// Deploy Container Registry
-module containerRegistry './modules/containerRegistry.bicep' = {
-  name: 'containerRegistry'
+module cae './modules/containerAppEnv.bicep' = {
+  name: 'deploy-containerappenv-${environment}'
   params: {
-    baseName: baseName
     location: location
+    environment: environment
+    containerAppEnvName: containerAppEnvName
   }
 }
 
-// Deploy Log Analytics
-module logAnalytics './modules/logAnalytics.bicep' = {
-  name: 'logAnalytics'
+module eventGrid './modules/eventGridNamespace.bicep' = {
+  name: 'deploy-eventgrid-${environment}'
   params: {
-    baseName: baseName
     location: location
+    environment: environment
+    eventGridNamespaceName: eventGridNamespaceName
   }
 }
 
-// Deploy Key Vault
-module keyVault './modules/keyVault.bicep' = {
-  name: 'keyVault'
+module logAnalytics './modules/logAnalyticsWorkspace.bicep' = {
+  name: 'deploy-law-${environment}'
   params: {
-    baseName: baseName
     location: location
-  }
-}
-
-// Deploy Event Grid
-module eventGrid './modules/eventGrid.bicep' = {
-  name: 'eventGrid'
-  params: {
-    baseName: baseName
-    location: location
+    environment: environment
+    logAnalyticsWorkspaceName: logAnalyticsWorkspaceName
   }
 }
