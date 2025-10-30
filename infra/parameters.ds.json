@@ -2,8 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "baseName": { "value": "iiot-dss" },
-    "location": { "value": "southeastasia" },
-    "containerImage": { "value": "myacr.azurecr.io/iiot:ds-latest" }
+    "environment": { "value": "qa" },
+    "location": { "value": "westus2" },
+    "keyVaultName": { "value": "iiot-qa-keyvault" },
+    "registryName": { "value": "iiotqaregistry" },
+    "containerAppEnvName": { "value": "container-app-env-qa" },
+    "eventGridNamespaceName": { "value": "event-grid-namespace-qa" },
+    "logAnalyticsWorkspaceName": { "value": "law-qa-wus-001" }
   }
 }
