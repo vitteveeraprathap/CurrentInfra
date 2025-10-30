@@ -1,14 +1,20 @@
-param baseName string
 param location string
+param environment string
+param containerAppEnvName string
 
-resource env 'Microsoft.App/managedEnvironments@2023-05-01' = {
-  name: '${baseName}-env'
+resource containerAppEnv 'Microsoft.App/managedEnvironments@2025-02-02-preview' = {
+  name: containerAppEnvName
   location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
   properties: {
-    appLogsConfiguration: {
-      destination: 'log-analytics'
-    }
+    zoneRedundant: false
+    publicNetworkAccess: 'Enabled'
+    appLogsConfiguration: {}
+  }
+  tags: {
+    Environment: environment
+    Owner: 'OTT GDC Amc'
   }
 }
-
-output environmentId string = env.id
