@@ -1,8 +1,9 @@
-param baseName string
 param location string
+param environment string
+param keyVaultName string
 
-resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
-  name: '${baseName}-kvvv'
+resource keyVault 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: keyVaultName
   location: location
   properties: {
     tenantId: subscription().tenantId
@@ -12,9 +13,9 @@ resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
     }
     accessPolicies: []
     enabledForDeployment: true
-    enabledForTemplateDeployment: true
-    enabledForDiskEncryption: true
+  }
+  tags: {
+    Environment: environment
+    Owner: 'OTT ODC Amc'
   }
 }
-
-output id string = kv.id
